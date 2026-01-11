@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Pustaka</title>
+    <!-- Memuat Tailwind CSS dari CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Menggunakan CSS Variables untuk manajemen tema yang lebih bersih */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            
+            /* --- LIGHT MODE VARIABLES (Default) --- */
+            --bg-main: #f0f4f8; /* background-color sangat terang */
+            --bg-gradient-start: #f0f4f8;
+            --bg-gradient-end: #d9e2ec;
+            --text-primary: #1f2937; /* gray-900 */
+            --text-secondary: #6b7280; /* gray-500/600 */
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb; /* gray-200 */
+            --link-preview-bg: #eff6ff; /* blue-50 */
+            --link-icon: #3b82f6; /* blue-600 */
+            --footer-border: #d1d5db; /* gray-300 */
+        }
+
+        /* --- DARK MODE STYLES --- */
+        body.dark-mode {
+            --bg-main: #1f2937; 
+            --bg-gradient-start: #111827; 
+            --bg-gradient-end: #1f2937;
+            --text-primary: #f3f4f6; /* Light Gray */
+            --text-secondary: #9ca3af; /* Gray-400 */
+            --card-bg: #374151; /* Slate-700 */
+            --card-border: #4b5563; /* Slate-600 */
+            --link-preview-bg: #4b5563; /* Slate-600 */
+            --link-icon: #93c5fd; /* Light Blue-300 */
+            --footer-border: #4b5563;
+        }
+        
+        /* Apply CSS variables to global elements */
+        body {
+            background-color: var(--bg-main);
+            background-image: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-primary);
+        }
+
+        /* Styling untuk card referensi */
+        .reference-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--card-bg);
+            border-color: var(--card-border);
+            /* Pastikan teks panjang di dalam card tidak terpotong */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+        .reference-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #3b82f6; /* Border biru saat di-hover (tetap) */
+        }
+
+        /* Override specific text and component colors to use variables */
+        h1, h2 { color: var(--text-primary); }
+        .text-gray-600, .text-gray-500 { color: var(--text-secondary); }
+
+        .link-preview {
+            background-color: var(--link-preview-bg); 
+            border-color: var(--card-border);
+        }
+        .link-icon, .link-preview span {
+            color: var(--link-icon); 
+        }
+
+        /* Search Input Styling */
+        #searchInput {
+            background-color: var(--card-bg);
+            border-color: var(--card-border);
+            color: var(--text-primary);
+        }
+        /* Placeholder color */
+        #searchInput::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+        .text-gray-400 { color: var(--text-secondary); opacity: 0.8; }
+
+        /* Footer border color */
+        footer {
+            border-color: var(--footer-border);
+        }
+        
+        /* Gaya khusus untuk teks Daftar Pustaka 1 baris */
+        .citation-text {
+            font-size: 0.875rem; /* text-sm */
+            line-height: 1.4;
+            display: block; /* Agar bisa menggunakan margin */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tombol Mode Gelap (Fixed Top-Right) - Menggunakan tag <img> -->
+    <!-- CATATAN: Atribut src diatur ke nama file lokal yang Anda tentukan: dark.png dan light.png -->
+    <button id="themeToggle" class="fixed top-4 right-4 p-2 rounded-full bg-white text-gray-800 shadow-xl transition-colors duration-300 z-50 hover:bg-gray-100">
+        <!-- Icon Mode Gelap (Muncul saat Mode Terang) -->
+        <!-- Ketika mode LIGT, tampilkan icon DARK (dark.png) untuk toggle ke DARK mode -->
+        <img id="moonIcon" class="w-5 h-5" 
+             src="dark.png" 
+             alt="Dark Mode Icon" 
+             onerror="this.onerror=null; this.src='https://placehold.co/20x20/374151/FBBF24?text=DM';"
+        />
+        <!-- Icon Mode Terang (Muncul saat Mode Gelap) -->
+        <!-- Ketika mode DARK, tampilkan icon LIGHT (light.png) untuk toggle ke LIGHT mode -->
+        <img id="sunIcon" class="w-5 h-5 hidden" 
+             src="light.png" 
+             alt="Light Mode Icon" 
+             onerror="this.onerror=null; this.src='https://placehold.co/20x20/FBBF24/1F2937?text=LM';"
+        />
+    </button>
+
+    <div class="container mx-auto px-4 py-12">
+        
+        <header class="text-center mb-8">
+            <!-- H1 dan P menggunakan warna teks yang diatur oleh variabel CSS -->
+            <h1 class="text-4xl sm:text-5xl font-extrabold mb-2 tracking-tight">
+                Daftar Pustaka
+            </h1>
+            <!-- P Teks diubah sesuai permintaan: Kumpulan pranala (link) ilmiah yang digunakan dalam penyusunan karya -->
+            <p class="text-lg text-gray-600">
+                Referensi terkait Pencegahan Kebakaran, Korsleting Listrik, dan Penggunaan APAR
+            </p>
+        </header>
+
+        <!-- Input Pencarian -->
+        <div class="mb-10 max-w-2xl mx-auto">
+            <div class="relative">
+                <!-- Hapus kelas bg-white dari input -->
+                <input type="text" id="searchInput" placeholder="Cari referensi (cth: APAR, Depok, Korsleting)..." class="w-full p-3 pl-12 border border-gray-300 rounded-lg shadow-md focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                <!-- Icon Pencarian -->
+                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+        </div>
+        
+        <!-- Daftar Referensi dalam Grid Responsif -->
+        <!-- Diubah menjadi 1 kolom penuh agar daftar pustaka 1 baris terlihat rapi -->
+        <div id="references-grid" class="grid gap-4 grid-cols-1">
+            
+            <!-- REF 1: Bromindo APAR -->
+            <div class="reference-card border border-gray-200 rounded-xl shadow-lg hover:shadow-xl overflow-hidden" data-keywords="Bromindo Lokasi Penempatan APAR Alat Pemadam Api Ringan Standar" id="card-1">
+                <a href="https://www.bromindo.com/lokasi-dan-penempatan-apar/amp/?srsltid=AfmBOorS9PmBaG1Vwa9R_lz8fpVMhpcLMyZbWWn4vrqxbAJpCrqiIEXV" target="_blank" rel="noopener noreferrer" class="block">
+                    <div class="link-preview p-4 border-b border-blue-100 flex items-center justify-start">
+                        <svg class="w-6 h-6 link-icon mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="text-sm font-medium hover:underline">Baca Panduan</span>
+                    </div>
+                </a>
+                <div class="p-4">
+                    <p class="citation-text" id="title-1">
+                        Bromindo. (n.d.). <em>Lokasi dan Penempatan APAR Sesuai Standar</em>. Diperoleh dari <a href="https://www.bromindo.com/lokasi-dan-penempatan-apar/amp/?srsltid=AfmBOorS9PmBaG1Vwa9R_lz8fpVMhpcLMyZbWWn4vrqxbAJpCrqiIEXV" class="text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-100 break-all" target="_blank" rel="noopener noreferrer">https://www.bromindo.com/lokasi-dan-penempatan-apar/</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- REF 2: Berita Depok (Korsleting) -->
+            <div class="reference-card border border-gray-200 rounded-xl shadow-lg hover:shadow-xl overflow-hidden" data-keywords="Pemerintah Kota Depok Berita Korsleting Listrik Kebakaran 2025" id="card-2">
+                <a href="https://berita.depok.go.id/korsleting-listrik-dominasi-kasus-kebakaran-di-kota-depok-tahun-2025" target="_blank" rel="noopener noreferrer" class="block">
+                    <div class="link-preview p-4 border-b border-blue-100 flex items-center justify-start">
+                        <svg class="w-6 h-6 link-icon mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                        <span class="text-sm font-medium hover:underline">Lihat Berita</span>
+                    </div>
+                </a>
+                <div class="p-4">
+                    <p class="citation-text" id="title-2">
+                        Pemerintah Kota Depok. (2025). <em>Korsleting Listrik Dominasi Kasus Kebakaran di Kota Depok Tahun 2025</em>. Portal Berita Resmi Pemerintah Kota Depok. Diperoleh dari <a href="https://berita.depok.go.id/korsleting-listrik-dominasi-kasus-kebakaran-di-kota-depok-tahun-2025" class="text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-100 break-all" target="_blank" rel="noopener noreferrer">https://berita.depok.go.id/korsleting-listrik-dominasi-kasus-kebakaran-di-kota-depok-tahun-2025</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- REF 3: Kaltimprov Samarinda -->
+            <div class="reference-card border border-gray-200 rounded-xl shadow-lg hover:shadow-xl overflow-hidden" data-keywords="Kaltim Samarinda Kebakaran Korsleting Waspada Pemerintah Provinsi" id="card-3">
+                <a href="https://kaltimprov.go.id/detailberita/50-persen-kebakaran-di-samarinda-akibat-korsleting-warga-diimbau-waspada" target="_blank" rel="noopener noreferrer" class="block">
+                    <div class="link-preview p-4 border-b border-blue-100 flex items-center justify-start">
+                        <svg class="w-6 h-6 link-icon mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                        <span class="text-sm font-medium hover:underline">Lihat Berita</span>
+                    </div>
+                </a>
+                <div class="p-4">
+                    <p class="citation-text" id="title-3">
+                        Pemerintah Provinsi Kalimantan Timur. (n.d.). <em>50 Persen Kebakaran di Samarinda Akibat Korsleting, Warga Diimbau Waspada</em>. Diperoleh dari <a href="https://kaltimprov.go.id/detailberita/50-persen-kebakaran-di-samarinda-akibat-korsleting-warga-diimbau-waspada" class="text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-100 break-all" target="_blank" rel="noopener noreferrer">https://kaltimprov.go.id/detailberita/50-persen-kebakaran-di-samarinda-akibat-korsleting-warga-diimbau-waspada</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- REF 4: Pusiknas Polri -->
+            <div class="reference-card border border-gray-200 rounded-xl shadow-lg hover:shadow-xl overflow-hidden" data-keywords="Pusiknas Polri Kebakaran Perumahan Data Statistik" id="card-4">
+                <a href="https://pusiknas.polri.go.id/detail_artikel/kebakaran_paling_banyak_terjadi_di_perumahan" target="_blank" rel="noopener noreferrer" class="block">
+                    <div class="link-preview p-4 border-b border-blue-100 flex items-center justify-start">
+                        <svg class="w-6 h-6 link-icon mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span class="text-sm font-medium hover:underline">Lihat Artikel</span>
+                    </div>
+                </a>
+                <div class="p-4">
+                    <p class="citation-text" id="title-4">
+                        Pusiknas Polri. (n.d.). <em>Kebakaran Paling Banyak Terjadi di Perumahan</em>. Diperoleh dari <a href="https://pusiknas.polri.go.id/detail_artikel/kebakaran_paling_banyak_terjadi_di_perumahan" class="text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-100 break-all" target="_blank" rel="noopener noreferrer">https://pusiknas.polri.go.id/detail_artikel/kebakaran_paling_banyak_terjadi_di_perumahan</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- REF 5: Republika Infografis -->
+            <div class="reference-card border border-gray-200 rounded-xl shadow-lg hover:shadow-xl overflow-hidden" data-keywords="Republika Visual Infografis Korsleting Jakarta Kebakaran" id="card-5">
+                <a href="https://visual.republika.co.id/berita/rdixsz382/infografis-korsleting-biang-kerok-kebakaran-di-jakarta" target="_blank" rel="noopener noreferrer" class="block">
+                    <div class="link-preview p-4 border-b border-blue-100 flex items-center justify-start">
+                        <svg class="w-6 h-6 link-icon mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span class="text-sm font-medium hover:underline">Lihat Infografis</span>
+                    </div>
+                </a>
+                <div class="p-4">
+                    <p class="citation-text" id="title-5">
+                        Republika. (n.d.). <em>Infografis: Korsleting Biang Kerok Kebakaran di Jakarta</em>. Diperoleh dari <a href="https://visual.republika.co.id/berita/rdixsz382/infografis-korsleting-biang-kerok-kebakaran-di-jakarta" class="text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-100 break-all" target="_blank" rel="noopener noreferrer">https://visual.republika.co.id/berita/rdixsz382/infografis-korsleting-biang-kerok-kebakaran-di-jakarta</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- REF 6: Samarinda Pos -->
+            <div class="reference-card border border-gray-200 rounded-xl shadow-lg hover:shadow-xl overflow-hidden" data-keywords="Samarinda Pos Sapos Kebakaran 2025 Permukiman Korsleting" id="card-6">
+                <a href="https://www.sapos.co.id/metropolis/2456966205/185-kebakaran-terjadi-di-samarinda-sepanjang-2025-permukiman-dan-korsleting-listrik-dominan" target="_blank" rel="noopener noreferrer" class="block">
+                    <div class="link-preview p-4 border-b border-blue-100 flex items-center justify-start">
+                        <svg class="w-6 h-6 link-icon mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                        <span class="text-sm font-medium hover:underline">Baca Berita</span>
+                    </div>
+                </a>
+                <div class="p-4">
+                    <p class="citation-text" id="title-6">
+                        Samarinda Pos. (2025). <em>185 Kebakaran Terjadi di Samarinda Sepanjang 2025, Permukiman dan Korsleting Listrik Dominan</em>. Diperoleh dari <a href="https://www.sapos.co.id/metropolis/2456966205/185-kebakaran-terjadi-di-samarinda-sepanjang-2025-permukiman-dan-korsleting-listrik-dominan" class="text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-100 break-all" target="_blank" rel="noopener noreferrer">https://www.sapos.co.id/metropolis/2456966205/185-kebakaran-terjadi-di-samarinda-sepanjang-2025-permukiman-dan-korsleting-listrik-dominan</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- REF 7: Safety Sign APAR -->
+            <div class="reference-card border border-gray-200 rounded-xl shadow-lg hover:shadow-xl overflow-hidden" data-keywords="Safety Sign Indonesia Infografis Fakta Penting APAR Penggunaan" id="card-7">
+                <a href="https://www.safetysign.co.id/news/Infografis-Fakta-Penting-Tentang-Penggunaan-APAR" target="_blank" rel="noopener noreferrer" class="block">
+                    <div class="link-preview p-4 border-b border-blue-100 flex items-center justify-start">
+                        <svg class="w-6 h-6 link-icon mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="text-sm font-medium hover:underline">Lihat Panduan</span>
+                    </div>
+                </a>
+                <div class="p-4">
+                    <p class="citation-text" id="title-7">
+                        Safety Sign Indonesia. (n.d.). <em>Infografis: Fakta Penting Tentang Penggunaan APAR</em>. Diperoleh dari <a href="https://www.safetysign.co.id/news/Infografis-Fakta-Penting-Tentang-Penggunaan-APAR" class="text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-100 break-all" target="_blank" rel="noopener noreferrer">https://www.safetysign.co.id/news/Infografis-Fakta-Penting-Tentang-Penggunaan-APAR</a>
+                    </p>
+                </div>
+            </div>
+            
+        </div>
+        <!-- Akhir Daftar Referensi -->
+
+        <footer class="text-center mt-12 pt-6 border-t border-gray-300">
+            <p class="text-sm text-gray-500">
+                <span class="font-bold">Catatan:</span> Klik pada area referensi untuk langsung mengunjungi tautan sumber.
+            </p>
+        </footer>
+    </div>
+
+    <!-- Script JavaScript untuk fungsi Pencarian dan Dark Mode -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- FUNGSI PENCARIAN ---
+            const searchInput = document.getElementById('searchInput');
+            const referencesGrid = document.getElementById('references-grid');
+
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.toLowerCase().trim();
+                
+                const currentCards = referencesGrid.querySelectorAll('.reference-card');
+
+                currentCards.forEach(card => {
+                    // Mengambil keywords dan teks kutipan
+                    const keywords = card.getAttribute('data-keywords').toLowerCase();
+                    const citationText = card.querySelector('.citation-text').textContent.toLowerCase();
+                    
+                    const searchableText = `${keywords} ${citationText}`;
+
+                    if (query === '' || searchableText.includes(query)) {
+                        card.style.display = 'block'; 
+                    } else {
+                        card.style.display = 'none';  
+                    }
+                });
+            });
+            
+            // --- FUNGSI DARK MODE ---
+            const themeToggle = document.getElementById('themeToggle');
+            const moonIcon = document.getElementById('moonIcon'); // Untuk mode Dark (Icon Bulan/dark.png)
+            const sunIcon = document.getElementById('sunIcon'); // Untuk mode Light (Icon Matahari/light.png)
+
+            // 1. Fungsi untuk menerapkan tema
+            function applyTheme(isDarkMode) {
+                // Tambahkan/Hapus kelas 'dark-mode' pada body
+                document.body.classList.toggle('dark-mode', isDarkMode);
+                
+                // Toggle ikon (menggunakan kelas 'hidden' pada tag <img>)
+                // Jika isDarkMode TRUE, tampilkan Sun Icon (light.png), sembunyikan Moon Icon (dark.png)
+                // Jika isDarkMode FALSE, tampilkan Moon Icon (dark.png), sembunyikan Sun Icon (light.png)
+                moonIcon.classList.toggle('hidden', isDarkMode);
+                sunIcon.classList.toggle('hidden', !isDarkMode);
+                
+                // Perbarui tombol toggle styling
+                if (isDarkMode) {
+                    // Dalam Dark Mode: Tombol jadi gelap, teks/ikon jadi terang/kuning
+                    themeToggle.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+                    themeToggle.classList.add('bg-gray-800', 'text-yellow-400', 'hover:bg-gray-700');
+                } else {
+                    // Dalam Light Mode: Tombol jadi terang, teks/ikon jadi gelap
+                    themeToggle.classList.remove('bg-gray-800', 'text-yellow-400', 'hover:bg-gray-700');
+                    themeToggle.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+                }
+            }
+
+            // 2. Muat tema dari localStorage saat startup
+            const storedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            let initialDarkMode = false;
+            if (storedTheme === 'dark') {
+                initialDarkMode = true;
+            } else if (storedTheme === null && prefersDark) {
+                initialDarkMode = true;
+            }
+            
+            applyTheme(initialDarkMode);
+            
+            // 3. Tambahkan listener ke tombol toggle
+            themeToggle.addEventListener('click', () => {
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                const newMode = !isDarkMode;
+                
+                applyTheme(newMode);
+                // Simpan preferensi tema ke localStorage
+                localStorage.setItem('theme', newMode ? 'dark' : 'light');
+            });
+        });
+    </script>
+
+</body>
+</html>
